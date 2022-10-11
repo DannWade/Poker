@@ -2,11 +2,11 @@
 let player1 = {
     name:'Player 1',
     hand:[
-        {code:'',suit:'',value:''},
-        {code:'',suit:'',value:''},
-        {code:'',suit:'',value:''},
-        {code:'',suit:'',value:''},
-        {code:'',suit:'',value:''},
+        {code:'',suit:'',value:'',numValue:''},
+        {code:'',suit:'',value:'',numValue:''},
+        {code:'',suit:'',value:'',numValue:''},
+        {code:'',suit:'',value:'',numValue:''},
+        {code:'',suit:'',value:'',numValue:''},
     ],
     chips:{
         black100:5,
@@ -48,11 +48,11 @@ let player1 = {
 let player2 = {
     name:'Player 2',
     hand:[
-        {code:'',suit:'',value:''},
-        {code:'',suit:'',value:''},
-        {code:'',suit:'',value:''},
-        {code:'',suit:'',value:''},
-        {code:'',suit:'',value:''},
+        {code:'',suit:'',value:'',numValue:''},
+        {code:'',suit:'',value:'',numValue:''},
+        {code:'',suit:'',value:'',numValue:''},
+        {code:'',suit:'',value:'',numValue:''},
+        {code:'',suit:'',value:'',numValue:''},
     ],
     chips:{
         black100:5,
@@ -98,7 +98,7 @@ let player2 = {
 fetch("https://www.deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1")
 .then(res => res.json())
 .then(data =>{  
-    console.log(data)
+    // console.log(data)
     localStorage.setItem('deckID',data.deck_id)     
 })
 .catch(err =>{
@@ -111,9 +111,29 @@ function addCardsToHandArray(data){
         player1.hand[i].code = data.cards[i].code
         player1.hand[i].suit = data.cards[i].suit
         player1.hand[i].value = data.cards[i].value
+        player1.hand[i].numValue = addNumValue(data.cards[i].value) 
         player2.hand[i].code = data.cards[i+5].code
         player2.hand[i].suit = data.cards[i+5].suit
         player2.hand[i].value = data.cards[i+5].value
+        player2.hand[i].numValue = addNumValue(data.cards[i+5].value)
+    }
+    function addNumValue(value){
+        switch(value){
+            case 'JACK':
+                return 11
+                break;
+             case 'QUEEN':
+                return 12
+                break;
+            case 'KING':
+                return 13
+                break;
+            case 'ACE':
+                return 14
+                break;
+            default:
+              return +value
+        }
     }
 }
 
@@ -125,6 +145,30 @@ function updateValues(player){
     })
 }
 
+//update winning hand
+function updateWinHand(player){
+    let tenU = player.valueCounter['10']
+    let jackU = player.valueCounter['JACK']
+    let queenU = player.valueCounter['QUEEN']
+    let kingU = player.valueCounter['KING']
+    let aceU = player.valueCounter['ACE']
+    //check for royal flush
+    function checkRoyalFlush(player){
+        let spadesArray = player.hand.filter(x=>x.suit==='SPADES'&& (x.value==='ACE' || x.value==='KING' || x.value==='QUEEN' || x.value==='JACK' || x.value==='10'))
+        let heartsArray = player.hand.filter(x=>x.suit==='HEARTS'&& (x.value==='ACE' || x.value==='KING' || x.value==='QUEEN' || x.value==='JACK' || x.value==='10'))
+        let diamondsArray = player.hand.filter(x=>x.suit==='DIAMONDS'&& (x.value==='ACE' || x.value==='KING' || x.value==='QUEEN' || x.value==='JACK' || x.value==='10'))
+        let clubsArray = player.hand.filter(x=>x.suit==='CLUBS' && (x.value==='ACE' || x.value==='KING' || x.value==='QUEEN' || x.value==='JACK' || x.value==='10'))
+        if ((tenU>0 && jackU>0 && queenU>0 && kingU>0 && aceU>0) && (spadesArray.length >=5 || diamondsArray.length >=5 || heartsArray.length >=5 || clubsArray.length>=5)){ 
+            player.winningHand.royalFlush = true
+        }
+    }
+    //check for straight flush
+
+
+
+    checkRoyalFlush(player)
+}
+
 // ******Start game and get card data*****
 
 document.querySelector('button').addEventListener('click', deal)
@@ -133,7 +177,7 @@ function deal (click){
     fetch(`https://www.deckofcardsapi.com/api/deck/${localStorage.getItem('deckID')}/draw/?count=10`)
     .then(res => res.json())
     .then(data =>{  
-        console.log(data)
+        // console.log(data)
         //player 1 cards
         document.querySelector('#p1c1').src = data.cards[0].image
         document.querySelector('#p1c2').src = data.cards[1].image 
@@ -151,6 +195,9 @@ function deal (click){
         addCardsToHandArray(data)
         updateValues(player1)
         updateValues(player2)
+        console.log(player1.hand)
+        console.log(player2.hand)
+
     })
     .catch(err =>{
         console.log(`error ${err}`)
