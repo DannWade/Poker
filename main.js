@@ -145,7 +145,7 @@ function updateValues(player){
     })
 }
 
-//update winning hand
+//update winning hand  
 function updateWinHand(player){
     let tenU = player.valueCounter['10']
     let jackU = player.valueCounter['JACK']
@@ -162,11 +162,24 @@ function updateWinHand(player){
             player.winningHand.royalFlush = true
         }
     }
-    //check for straight flush
-
-
-
+    //check for straight flush  ***BUG: loops reaches undefined when trying to compare the last card to the next card --->> fixed****
+    function checkStraightFlush(player){
+        let consecCount = 0 
+        for (let i =0; i<player.hand.length-1; i++){
+            if(((player.hand[i].numValue)+1 === player.hand[i+1].numValue) && (player.hand[i].value === player.hand[i+1].value)){
+                consecCount += 1
+            }
+        if((player.hand[player.hand.length-1].numValue === player.hand[player.hand.length-2].numValue) && (player.hand[player.hand.length-1].value === player.hand[player.hand.length-2].value)){
+            consecCount+=1
+            }
+        }
+        if (consecCount === 5){
+            player.winningHand.straightFlush = true
+        }
+    }
+    // execute all winning hand functions
     checkRoyalFlush(player)
+    checkStraightFlush(player)
 }
 
 // ******Start game and get card data*****
@@ -195,8 +208,10 @@ function deal (click){
         addCardsToHandArray(data)
         updateValues(player1)
         updateValues(player2)
-        console.log(player1.hand)
-        console.log(player2.hand)
+        updateWinHand(player1)
+        updateWinHand(player2)
+        console.log(player1)
+        console.log(player2)
 
     })
     .catch(err =>{
