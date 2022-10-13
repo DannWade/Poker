@@ -144,44 +144,41 @@ function updateValues(player){
         player.valueCounter[x.suit] +=1
     })
 }
-
 //update winning hand  
 function updateWinHand(player){
     // testing hands
-    player.hand[0].value = '2'
+    player.hand[0].value = 'ACE'
     player.hand[0].suit = 'CLUBS'
-    player.hand[0].numValue = 2
+    player.hand[0].numValue = 14
 
-    player.hand[1].value = '2'
-    player.hand[1].suit = 'SPADES'
-    player.hand[1].numValue = 2
+    player.hand[1].value = 'ACE'
+    player.hand[1].suit = 'DIAMONDS'
+    player.hand[1].numValue = 14
 
-    player.hand[2].value = '2'
+    player.hand[2].value = 'ACE'
     player.hand[2].suit = 'DIAMONDS'
-    player.hand[2].numValue = 2
+    player.hand[2].numValue = 14
 
-    player.hand[3].value = '2'
-    player.hand[3].suit = 'HEARTS'
-    player.hand[3].numValue = 2
+    player.hand[3].value = '10'
+    player.hand[3].suit = 'CLUBS'
+    player.hand[3].numValue = 10
 
-    player.hand[4].value = '2'
+    player.hand[4].value = '10'
     player.hand[4].suit = 'SPADES'
-    player.hand[4].numValue = 2
+    player.hand[4].numValue = 10
 
-
-
+    let sortedHandByValue = player.hand.sort(function(a,b){   // sort for four of a kind
+        if (a.numValue > b.numValue) return 1;
+        if (a.numValue < b.numValue) return -1;
+        if (a.suit < b.suit) return 1;
+        if (a.suit> b.suit) return -1;
+    }) 
+    console.log(sortedHandByValue)
     let tenU = player.valueCounter['10']
     let jackU = player.valueCounter['JACK']
     let queenU = player.valueCounter['QUEEN']
     let kingU = player.valueCounter['KING']
     let aceU = player.valueCounter['ACE']
-    let sortedHandByValue = player.hand.sort(function(a,b){
-        if (a.numValue > b.numValue) return 1;
-        if (a.numValue < b.numValue) return -1;
-        if (a.suit < b.suit) return 1;
-        if (a.suit> b.suit) return -1;
-    }) //BUG: must sort by in increasing order and by suit
-    console.log(sortedHandByValue)
     //check for royal flush
     function checkRoyalFlush(player){
         let spadesArray = player.hand.filter(x=>x.suit==='SPADES'&& (x.value==='ACE' || x.value==='KING' || x.value==='QUEEN' || x.value==='JACK' || x.value==='10'))
@@ -192,14 +189,14 @@ function updateWinHand(player){
             player.winningHand.royalFlush = true
         }
     }
-    //check for straight flush  ***BUG: loops reaches undefined when trying to compare the last card to the next card --->> fixed****
+    //check for straight flush TESTED: PASS ***BUG: loops reaches undefined when trying to compare the last card to the next card --->> fixed**** 
     function checkStraightFlush(player){
         let consecCount = 0 
-        for (let i =0; i<sortedHandByValue.length-1; i++){
-            if(((sortedHandByValue[i].numValue)+1 === sortedHandByValue[i+1].numValue) && (sortedHandByValue[i].suit === sortedHandByValue[i+1].suit)){
+        for (let i =0; i<player.hand.length-1; i++){
+            if(((player.hand[i].numValue)+1 === player.hand[i+1].numValue) && (player.hand[i].suit === player.hand[i+1].suit)){
                 consecCount += 1
             }
-        if((sortedHandByValue[player.hand.length-1].numValue === sortedHandByValue[player.hand.length-2].numValue) && (sortedHandByValue[player.hand.length-1].suit === sortedHandByValue[player.hand.length-2].suit)){
+        if((player.hand[player.hand.length-1].numValue === player.hand[player.hand.length-2].numValue) && (player.hand[player.hand.length-1].suit === player.hand[player.hand.length-2].suit)){
             consecCount+=1
             }
         }
@@ -222,14 +219,35 @@ function updateWinHand(player){
         }
         if((sortedHandByValue[sortedHandByValue.length-1].value === sortedHandByValue[sortedHandByValue.length-2].value) && (sortedHandByValue[sortedHandByValue.length-1].suit != sortedHandByValue[sortedHandByValue.length-2].suit)){
             fourKindCount +=1
-        }
-        
+        }   
     }
-
+    // check for full house TESTED:PASS
+    function checkFullHouse(player){
+        let firstTwoKind = false 
+        let secondThreeKind = false
+        let firstThreeKind = false
+        let secondTwoKind = false 
+        if((sortedHandByValue[0].value === sortedHandByValue[1].value) && (sortedHandByValue[0].suit != sortedHandByValue[1].suit)){
+            firstTwoKind = true
+        }
+        if((sortedHandByValue[3].value === sortedHandByValue[4].value) && (sortedHandByValue[3].suit != sortedHandByValue[4].suit)){
+            secondTwoKind = true
+        }
+        if(((sortedHandByValue[0].value === sortedHandByValue[1].value) && (sortedHandByValue[1].value === sortedHandByValue[2].value)) && ((sortedHandByValue[0].suit != sortedHandByValue[1].suit) && (sortedHandByValue[1].suit != sortedHandByValue[2].suit))){
+            firstThreeKind = true
+        }
+        if(((sortedHandByValue[2].value === sortedHandByValue[3].value) &&(sortedHandByValue[3].value === sortedHandByValue[4].value)) && ((sortedHandByValue[2].suit != sortedHandByValue[3].suit) && (sortedHandByValue[3].suit != sortedHandByValue[4].suit))){
+            secondThreeKind = true
+        }
+        if ((firstTwoKind == true && secondThreeKind ==true) || (firstThreeKind == true && secondTwoKind == true)){
+            player.winningHand.fullHouse = true
+        }
+    }
     // execute all winning hand functions
     checkRoyalFlush(player)
     checkStraightFlush(player)
     checkFourOfAKind(player)
+    checkFullHouse(player)
 }
 
 // ******Start game and get card data*****
