@@ -147,25 +147,25 @@ function updateValues(player){
 //update winning hand  
 function updateWinHand(player){
     // testing hands
-    player.hand[0].value = 'ACE'
+    player.hand[0].value = '3'
     player.hand[0].suit = 'CLUBS'
-    player.hand[0].numValue = 14
+    player.hand[0].numValue = 3
 
     player.hand[1].value = 'ACE'
-    player.hand[1].suit = 'DIAMONDS'
+    player.hand[1].suit = 'CLUBS'
     player.hand[1].numValue = 14
 
-    player.hand[2].value = 'ACE'
-    player.hand[2].suit = 'DIAMONDS'
-    player.hand[2].numValue = 14
+    player.hand[2].value = 'JACK'
+    player.hand[2].suit = 'CLUBS'
+    player.hand[2].numValue = 11
 
-    player.hand[3].value = '10'
+    player.hand[3].value = '5'
     player.hand[3].suit = 'CLUBS'
-    player.hand[3].numValue = 10
+    player.hand[3].numValue = 5
 
-    player.hand[4].value = '10'
-    player.hand[4].suit = 'SPADES'
-    player.hand[4].numValue = 10
+    player.hand[4].value = '7'
+    player.hand[4].suit = 'CLUBS'
+    player.hand[4].numValue = 7
 
     let sortedHandByValue = player.hand.sort(function(a,b){   // sort for four of a kind
         if (a.numValue > b.numValue) return 1;
@@ -195,11 +195,11 @@ function updateWinHand(player){
         for (let i =0; i<player.hand.length-1; i++){
             if(((player.hand[i].numValue)+1 === player.hand[i+1].numValue) && (player.hand[i].suit === player.hand[i+1].suit)){
                 consecCount += 1
-            }
-        if((player.hand[player.hand.length-1].numValue === player.hand[player.hand.length-2].numValue) && (player.hand[player.hand.length-1].suit === player.hand[player.hand.length-2].suit)){
+            } 
+        }
+        if((player.hand[player.hand.length-1].numValue === player.hand[player.hand.length-2].numValue-1) && (player.hand[player.hand.length-1].suit === player.hand[player.hand.length-2].suit)){
             consecCount+=1
             }
-        }
         if (consecCount >= 4){               // four comparisons covers five cards
             player.winningHand.straightFlush = true
         }
@@ -243,11 +243,17 @@ function updateWinHand(player){
             player.winningHand.fullHouse = true
         }
     }
+    function checkFlush(player){
+        if((sortedHandByValue[0].suit === sortedHandByValue[1].suit)&&(sortedHandByValue[1].suit === sortedHandByValue[2].suit)&&(sortedHandByValue[2].suit === sortedHandByValue[3].suit)&&(sortedHandByValue[3].suit === sortedHandByValue[4].suit)){
+            player.winningHand.flush = true
+        }
+    }
     // execute all winning hand functions
     checkRoyalFlush(player)
     checkStraightFlush(player)
     checkFourOfAKind(player)
     checkFullHouse(player)
+    checkFlush(player)
 }
 
 // ******Start game and get card data*****
