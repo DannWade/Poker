@@ -147,45 +147,42 @@ function updateValues(player){
 //update winning hand  
 function updateWinHand(player){
     // testing hands
-    // player.hand[0].value = '2'
-    // player.hand[0].suit = 'CLUBS'
-    // player.hand[0].numValue = 2
+    player.hand[0].value = 'ACE'
+    player.hand[0].suit = 'CLUBS'
+    player.hand[0].numValue = 14
 
-    // player.hand[1].value = '3'
-    // player.hand[1].suit = 'HEARTS'
-    // player.hand[1].numValue = 3
+    player.hand[1].value = 'KING'
+    player.hand[1].suit = 'CLUBS'
+    player.hand[1].numValue = 13
 
-    // player.hand[2].value = '5'
-    // player.hand[2].suit = 'DIAMONDS'
-    // player.hand[2].numValue = 5
+    player.hand[2].value = 'QUEEN'
+    player.hand[2].suit = 'CLUBS'
+    player.hand[2].numValue = 12
 
-    // player.hand[3].value = '6'
-    // player.hand[3].suit = 'SPADES'
-    // player.hand[3].numValue = 6
+    player.hand[3].value = 'JACK'
+    player.hand[3].suit = 'CLUBS'
+    player.hand[3].numValue = 11
 
-    // player.hand[4].value = '6'
-    // player.hand[4].suit = 'CLUBS'
-    // player.hand[4].numValue = 6
+    player.hand[4].value = '10'
+    player.hand[4].suit = 'HEARTS'
+    player.hand[4].numValue = 10
 
-    let sortedHandByValue = player.hand.sort(function(a,b){   // sort for four of a kind
+    let sortedHandByValue = player.hand.sort(function(a,b){   
         if (a.numValue > b.numValue) return 1;
         if (a.numValue < b.numValue) return -1;
         if (a.suit < b.suit) return 1;
         if (a.suit> b.suit) return -1;
     }) 
     console.log(sortedHandByValue)
-    let tenU = player.valueCounter['10']
-    let jackU = player.valueCounter['JACK']
-    let queenU = player.valueCounter['QUEEN']
-    let kingU = player.valueCounter['KING']
-    let aceU = player.valueCounter['ACE']
     //check for royal flush
-    function checkRoyalFlush(player){
-        let spadesArray = player.hand.filter(x=>x.suit==='SPADES'&& (x.value==='ACE' || x.value==='KING' || x.value==='QUEEN' || x.value==='JACK' || x.value==='10'))
-        let heartsArray = player.hand.filter(x=>x.suit==='HEARTS'&& (x.value==='ACE' || x.value==='KING' || x.value==='QUEEN' || x.value==='JACK' || x.value==='10'))
-        let diamondsArray = player.hand.filter(x=>x.suit==='DIAMONDS'&& (x.value==='ACE' || x.value==='KING' || x.value==='QUEEN' || x.value==='JACK' || x.value==='10'))
-        let clubsArray = player.hand.filter(x=>x.suit==='CLUBS' && (x.value==='ACE' || x.value==='KING' || x.value==='QUEEN' || x.value==='JACK' || x.value==='10'))
-        if ((tenU>0 && jackU>0 && queenU>0 && kingU>0 && aceU>0) && (spadesArray.length >=5 || diamondsArray.length >=5 || heartsArray.length >=5 || clubsArray.length>=5)){ 
+    function checkRoyalFlush(player){ //TESTED: PASS
+        let royalCount = 0
+        for(let i=sortedHandByValue.length-1;i>0;i--){
+            if ((sortedHandByValue[i].numValue === (10+i))&&(sortedHandByValue[i].suit===sortedHandByValue[i-1].suit)){
+                royalCount +=1
+               }
+        }
+        if (royalCount >= 4){
             player.winningHand.royalFlush = true
         }
     }
