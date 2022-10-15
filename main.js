@@ -147,25 +147,25 @@ function updateValues(player){
 //update winning hand  
 function updateWinHand(player){
     // testing hands
-    player.hand[0].value = '5'
-    player.hand[0].suit = 'CLUBS'
-    player.hand[0].numValue = 5
+    // player.hand[0].value = '2'
+    // player.hand[0].suit = 'CLUBS'
+    // player.hand[0].numValue = 2
 
-    player.hand[1].value = '6'
-    player.hand[1].suit = 'HEARTS'
-    player.hand[1].numValue = 6
+    // player.hand[1].value = '3'
+    // player.hand[1].suit = 'HEARTS'
+    // player.hand[1].numValue = 3
 
-    player.hand[2].value = '7'
-    player.hand[2].suit = 'DIAMONDS'
-    player.hand[2].numValue = 7
+    // player.hand[2].value = '5'
+    // player.hand[2].suit = 'DIAMONDS'
+    // player.hand[2].numValue = 5
 
-    player.hand[3].value = '8'
-    player.hand[3].suit = 'CLUBS'
-    player.hand[3].numValue = 8
+    // player.hand[3].value = '6'
+    // player.hand[3].suit = 'SPADES'
+    // player.hand[3].numValue = 6
 
-    player.hand[4].value = '9'
-    player.hand[4].suit = 'SPADES'
-    player.hand[4].numValue = 9
+    // player.hand[4].value = '6'
+    // player.hand[4].suit = 'CLUBS'
+    // player.hand[4].numValue = 6
 
     let sortedHandByValue = player.hand.sort(function(a,b){   // sort for four of a kind
         if (a.numValue > b.numValue) return 1;
@@ -248,7 +248,7 @@ function updateWinHand(player){
             player.winningHand.flush = true
         }
     }
-    function checkStraight(player){
+    function checkStraight(player){ // TESTED: PASS
             let straightCount = 0
         for (let i=0;i<sortedHandByValue.length-1;i++){
             if((sortedHandByValue[i].numValue+1 === sortedHandByValue[i+1].numValue)){
@@ -264,6 +264,56 @@ function updateWinHand(player){
             player.winningHand.straight = true
         }
     }
+    function checkThreeOfAKind(player){ // TESTED:PASS
+        let threeKindCount = 0
+        // if((sortedHandByValue[sortedHandByValue.length-1].value === sortedHandByValue[sortedHandByValue.length-2].value)){
+        //     threeKindCount +=1 // this segment of code is not needed - double counts values
+        // } 
+        for (let i=0;i<sortedHandByValue.length-1;i++){
+            if((sortedHandByValue[i].value===sortedHandByValue[i+1].value)){
+                threeKindCount +=1 
+            if (threeKindCount >=2){                       //two comparisons covers three cards
+                player.winningHand.threeOfAKind = true
+                }  
+            } else{
+                threeKindCount = 0
+            }
+        }
+    }
+    function checkTwoPair(player){ // TESTED: PASS
+        let pairCount = 0
+        for (let i=0;i<sortedHandByValue.length-1;i++){
+            if((sortedHandByValue[i].numValue === sortedHandByValue[i+1].numValue)){
+                pairCount +=1
+                i+=1
+            } else{
+                pairCount += 0
+            }
+        }
+        // if((sortedHandByValue[sortedHandByValue.length-1].numValue === sortedHandByValue[sortedHandByValue.length-2].numValue)){
+        //     pairCount +=1  // This segment of codes is not needed - double counts last card
+        // }   
+        if (pairCount >=2){                  
+            player.winningHand.twoPair = true
+        }
+    }
+    function checkPair(player){ // TESTED: PASS
+        let pairCount = 0
+        for (let i=0;i<sortedHandByValue.length-1;i++){
+            if((sortedHandByValue[i].numValue === sortedHandByValue[i+1].numValue)){
+                pairCount +=1
+                i+=1
+            } else{
+                pairCount += 0
+            }
+        }  
+        if (pairCount >=1){                  
+            player.winningHand.pair = true
+        }
+    }
+    function checkHighCard(player){ // TESTED: PASS
+        player.winningHand.highCard = sortedHandByValue[sortedHandByValue.length-1].numValue
+    }
     // execute all winning hand functions
     checkRoyalFlush(player)
     checkStraightFlush(player)
@@ -271,6 +321,10 @@ function updateWinHand(player){
     checkFullHouse(player)
     checkFlush(player)
     checkStraight(player)
+    checkThreeOfAKind(player)
+    checkTwoPair(player)
+    checkPair(player)
+    checkHighCard(player)
 }
 
 // ******Start game and get card data*****
