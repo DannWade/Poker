@@ -147,25 +147,25 @@ function updateValues(player){
 //update winning hand  
 function updateWinHand(player){
     // testing hands
-    player.hand[0].value = 'ACE'
-    player.hand[0].suit = 'CLUBS'
-    player.hand[0].numValue = 14
+    // player.hand[0].value = 'ACE'
+    // player.hand[0].suit = 'CLUBS'
+    // player.hand[0].numValue = 14
 
-    player.hand[1].value = 'KING'
-    player.hand[1].suit = 'CLUBS'
-    player.hand[1].numValue = 13
+    // player.hand[1].value = 'KING'
+    // player.hand[1].suit = 'CLUBS'
+    // player.hand[1].numValue = 13
 
-    player.hand[2].value = 'QUEEN'
-    player.hand[2].suit = 'CLUBS'
-    player.hand[2].numValue = 12
+    // player.hand[2].value = 'QUEEN'
+    // player.hand[2].suit = 'CLUBS'
+    // player.hand[2].numValue = 12
 
-    player.hand[3].value = 'JACK'
-    player.hand[3].suit = 'CLUBS'
-    player.hand[3].numValue = 11
+    // player.hand[3].value = 'JACK'
+    // player.hand[3].suit = 'CLUBS'
+    // player.hand[3].numValue = 11
 
-    player.hand[4].value = '10'
-    player.hand[4].suit = 'HEARTS'
-    player.hand[4].numValue = 10
+    // player.hand[4].value = '10'
+    // player.hand[4].suit = 'HEARTS'
+    // player.hand[4].numValue = 10
 
     let sortedHandByValue = player.hand.sort(function(a,b){   
         if (a.numValue > b.numValue) return 1;
@@ -324,6 +324,57 @@ function updateWinHand(player){
     checkHighCard(player)
 }
 
+function checkWinner(){  // BUG: cannot handle ties
+    let player1Win = false
+    let player2Win = false
+    if(player1.winningHand.royalFlush === true && player1.winningHand.royalFlush ===false){
+        player1Win = true
+    }else if(player2.winningHand.royalFlush === true && player2.winningHand.royalFlush ===false){
+        player2Win = true
+    }else if(player1.winningHand.straightFlush === true && player1.winningHand.straightFlush ===false){
+        player1Win = true
+    }else if(player2.winningHand.straightFlush === true && player1.winningHand.straightFlush ===false){
+        player2Win = true
+    }else if(player1.winningHand.fourOfAKind === true && player2.winningHand.fourOfAKind ===false){
+        player1Win = true
+    } else if(player2.winningHand.fourOfAKind === true && player1.winningHand.fourOfAKind ===false){
+        player2Win = true
+    } else if(player1.winningHand.fullHouse === true && player2.winningHand.fullHouse ===false){
+        player1Win = true
+    } else if(player2.winningHand.fullHouse === true && player1.winningHand.fullHouse ===false){
+        player2Win = true
+    } else if(player1.winningHand.flush === true && player2.winningHand.flush ===false){
+        player1Win = true
+    } else if(player2.winningHand.flush === true && player1.winningHand.flush ===false){
+        player2Win = true
+    } else if(player1.winningHand.straight === true && player2.winningHand.straight ===false){
+        player1Win = true
+    } else if(player2.winningHand.straight === true && player1.winningHand.straight ===false){
+        player2Win = true
+    } else if(player1.winningHand.threeOfAKind === true && player2.winningHand.threeOfAKind ===false){
+        player1Win = true
+    } else if(player2.winningHand.threeOfAKind === true && player1.winningHand.threeOfAKind ===false){
+        player2Win = true
+    } else if(player1.winningHand.twoPair === true && player2.winningHand.twoPair ===false){
+        player1Win = true
+    } else if(player2.winningHand.twoPair === true && player1.winningHand.twoPair ===false){
+        player2Win = true
+    } else if(player1.winningHand.pair === true && player2.winningHand.pair ===false){
+        player1Win = true
+    } else if(player2.winningHand.pair === true && player1.winningHand.pair ===false){
+        player2Win = true
+    } else if(player1.winningHand.highCard > player2.winningHand.highCard){
+        player1Win = true
+    } else{
+        player2Win = true
+    }
+    if (player1Win === true){
+        alert('player1 wins!')
+    } else{
+        alert('player2 wins!')
+    }
+}
+
 // ******Start game and get card data*****
 
 document.querySelector('button').addEventListener('click', deal)
@@ -352,6 +403,7 @@ function deal (click){
         updateValues(player2)
         updateWinHand(player1)
         updateWinHand(player2)
+        checkWinner()
         console.log(player1)
         console.log(player2)
 
